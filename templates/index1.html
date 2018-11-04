@@ -1,0 +1,177 @@
+{% extends "bootstrap/base.html" %}
+{% block head %}
+{{ super() }}
+
+    <link href="/static/chart8.css?q=1280549780" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,700' rel='stylesheet' type='text/css'>
+    <link href="{{url_for('static', filename='font-awesome.min.css')}}" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src='static/Chart.min.js'></script>
+
+    <script type="text/javascript">
+
+
+    
+      // Load the Visualization API and the ColumnChart package.
+      google.load('visualization', '1', {'packages':['corechart','controls','table'],'mapsApiKey': 'AIzaSyBB4u_VxGgOQ3eBA-WKlt_qJXMCNZCiiHc'});
+      
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawChart);
+      
+      // Callback that creates and populates a data table, 
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        // Create our data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Country');
+        data.addColumn('number', 'Aids Prevalance in Africa');
+        data.addRows([
+
+                {%- for country, percent in data['countries'].items() %}
+                ['{{country}}',{{percent}}],
+                {%- endfor %}
+        ]);
+
+        var controlStr = new google.visualization.ControlWrapper({
+          'controlType': 'StringFilter',
+          'containerId': 'string_div',
+          'options': {
+            'matchType':'any',
+            'filterColumnIndex':0
+          }
+        });
+        var dashboard = new google.visualization.Dashboard(
+            document.getElementById('dashboard_div'));
+
+        var chart = new google.visualization.ChartWrapper(
+            {
+          'chartType': 'PieChart',
+          'containerId': 'pie_div',
+          'options': {
+            'width': 800,
+            'height': 300,
+            'pieSliceText': 'value'
+          }
+        });
+
+        var chart2 = new google.visualization.ChartWrapper(
+            {
+          'chartType': 'ColumnChart',
+          'containerId': 'chart_div',
+          'options': {
+            'width': 1200,
+            'height': 300
+          }
+        });
+
+        var chart3 = new google.visualization.ChartWrapper(
+            {
+          'chartType': 'Table',
+          'containerId': 'table_div',
+          'options': {
+            'width': 800,
+            'height': 300
+          }
+        });
+
+        var chart4 = new google.visualization.ChartWrapper(
+            {
+          'chartType': 'GeoChart',
+          'containerId': 'geo_div',
+          'options': {
+            'width': 600,
+            'height': 300,
+            'region': '002'
+          }
+        });
+        dashboard.bind(controlStr, [chart,chart2,chart3,chart4]);
+
+        // Draw the dashboard.
+        dashboard.draw(data);
+
+      }
+    </script>
+{% endblock %}
+{% block content %}
+            <header>
+    <div class="container clearfix">
+        <div class="panel-heading"><h1>Malaria Prevalance  in Africa</h1>
+      </div>
+    </div>
+    </header>
+    <div class="row">
+  <div class="column">
+    <div class="card"><h4 style="font-family:verdana;">Country with the highest Malaria Prevalance : </h4><h3 style="color:red;">Mali</h3> </div>
+  </div>
+  <div class="column">
+    <div class="card"><h4 style="font-family:verdana;">Countries with the lowest Malaria Prevalance : </h4><h3 style="color:blue;">Botswana, Namibia, Swaziland and S.Africa</h3></div>
+  </div>
+<div class="column">
+    <div class="card"><h3 style="color:green;">91%</h3><h4 style="font-family:verdana;"> Of Malaria deaths are from Sub Saharan Africa</h4></div>
+  </div>
+
+</div>
+        <div class="panel panel-info">
+            <div class="panel-heading"><h3 class="my-4" style="font-family:verdana;">Search African country to visualize its malaria prevalance</h3>
+                <div class="control" id="string_div"></div>
+            </div>
+        </div>
+    <div class="row">
+        <div class="col-md-7">
+          <a href="#">
+            <div id="geo_div"></div>
+          </a>
+          </div>
+        <div class="col-md-5">
+          <h3>GeoMap</h3>
+          <p>This is a GeoMap visualizing the 2018 malaria prevalance in African countries</p>
+          <a class="btn btn-primary" href="#">Contribute</a>
+        </div>
+      </div>
+         <div class="row">
+        <div class="col-md-7">
+          <a href="#">
+            <div id="table_div"></div>
+          </a>
+          </div>
+        <div class="col-md-5">
+          <h3>Table</h3>
+          <p>Table showing countries with their respective malaria prevalance rates</p>
+          <a class="btn btn-primary" href="#">Contribute</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-7">
+          <a href="#">
+            <div id="pie_div"></div>
+          </a>
+          </div>
+        <div class="col-md-5">
+          <h3>Pie Chart</h3>
+          <p>Pie Chart visualizing countries with their respective malaria prevalace rates </p>
+          <a class="btn btn-primary" href="#">Contribute</a>
+        </div>
+      </div>
+       <div class="row">
+        <div class="col-md-7">
+          <a href="#">
+            <div id="chart_div"></div>
+          </a>
+          </div>
+      </div>
+      <div class="col-md-5">
+          <h3>Bar Chart</h3>
+          <p>Bar chart visualizing countries with their respective malaria prevalace rates </p>
+          <a class="btn btn-primary" href="#">Contribute</a>
+        </div>
+    <!-- Bootstrap core JavaScript -->
+     <!-- Bootstrap core JavaScript -->
+    <script src="/static/jquery/jquery.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+   {% endblock %}
+
